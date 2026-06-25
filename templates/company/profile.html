@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Company Profile | PlaceTrack AI{% endblock %}
+
+{% block dashboard_title %}Company Profile Settings{% endblock %}
+
+{% block content %}
+<div class="glass-panel section-card" style="max-width: 750px; margin: 0 auto;">
+    <h3 class="section-title" style="margin-bottom:24px;">Update Company Details</h3>
+    
+    <form action="{{ url_for('company.profile') }}" method="POST" enctype="multipart/form-data" style="display:flex; flex-direction:column; gap:24px;">
+        
+        <div style="display:flex; align-items:center; gap:24px; flex-wrap:wrap; background:rgba(255,255,255,0.01); padding:20px; border-radius:12px; border:1px solid var(--border-color);">
+            <div style="position:relative;">
+                {% if current_user.logo and current_user.logo != 'default_logo.png' %}
+                    <img id="logo-preview" src="{{ url_for('static', filename='uploads/logos/' + current_user.logo) }}" alt="logo" style="width:100px; height:100px; border-radius:12px; object-fit:cover; border:2px solid var(--color-primary);">
+                {% else %}
+                    <img id="logo-preview" src="{{ url_for('static', filename='uploads/logos/default_logo.png') }}" alt="logo" style="width:100px; height:100px; border-radius:12px; object-fit:cover; border:2px dashed var(--color-primary); opacity:0.6;">
+                {% endif %}
+            </div>
+            
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <label class="btn-secondary" style="cursor:pointer; font-size:13px; padding:8px 16px;">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Upload Company Logo
+                    <input type="file" id="logo-upload" name="logo" style="display:none;" accept=".png,.jpg,.jpeg,.gif">
+                </label>
+                <span style="font-size:11px; color:var(--text-muted);">Format: PNG, JPG, JPEG, GIF (Max size 16MB)</span>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="companyname">Company Name</label>
+                <input type="text" id="companyname" name="companyname" class="form-control" value="{{ current_user.companyname }}" required>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="name">Contact HR Person</label>
+                <input type="text" id="name" name="name" class="form-control" value="{{ current_user.name }}" required>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Corporate Email Address (Read-only)</label>
+                <input type="email" class="form-control" value="{{ current_user.email }}" readonly style="opacity: 0.6; cursor:not-allowed;">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="contactno">Contact Number</label>
+                <input type="tel" id="contactno" name="contactno" class="form-control" value="{{ current_user.contactno }}" required>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="website">Company Website URL</label>
+            <input type="url" id="website" name="website" class="form-control" value="{{ current_user.website }}" required>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">State Location</label>
+                <input type="text" class="form-control" value="{{ current_user.state }}" readonly style="opacity: 0.8;">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">City Location</label>
+                <input type="text" class="form-control" value="{{ current_user.city }}" readonly style="opacity: 0.8;">
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="aboutme">Short About Us Profile</label>
+            <textarea id="aboutme" name="aboutme" class="form-control" rows="4" required>{{ current_user.aboutme or '' }}</textarea>
+        </div>
+
+        <button type="submit" class="btn-primary" style="justify-content:center; padding:12px; font-size:15px; margin-top:10px;">
+            <i class="fa-solid fa-save"></i> Save Recruiter Profile Modifications
+        </button>
+    </form>
+</div>
+{% endblock %}

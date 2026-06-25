@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard | PlaceTrack AI{% endblock %}
+
+{% block dashboard_title %}Admin Control Panel{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="glass-panel stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-user-graduate"></i></div>
+        <div class="stat-value">{{ stats.total_students }}</div>
+        <div class="stat-label">Total Candidates</div>
+    </div>
+    
+    <div class="glass-panel stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-building"></i></div>
+        <div class="stat-value">{{ stats.total_companies }}</div>
+        <div class="stat-label">Total Recruiters</div>
+    </div>
+
+    <div class="glass-panel stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-briefcase"></i></div>
+        <div class="stat-value">{{ stats.total_jobs }}</div>
+        <div class="stat-label">Active Job Drives</div>
+    </div>
+
+    <div class="glass-panel stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-file-signature"></i></div>
+        <div class="stat-value">{{ stats.total_applications }}</div>
+        <div class="stat-label">Job Applications</div>
+    </div>
+</div>
+
+<div style="display:grid; grid-template-columns: 1fr 1fr; gap:30px; margin-top:30px;">
+    <!-- Pending Candidates -->
+    <div class="glass-panel section-card" style="margin-bottom:0;">
+        <div class="section-header">
+            <h3 class="section-title">Pending Candidates ({{ stats.pending_students }})</h3>
+            <a href="{{ url_for('admin.manage_students') }}" class="btn-secondary" style="font-size:11px; padding:4px 8px;">View All</a>
+        </div>
+        
+        <div class="custom-table-container">
+            <table class="custom-table" style="font-size:13px;">
+                <thead>
+                    <tr>
+                        <th>Candidate</th>
+                        <th>Course</th>
+                        <th>Approval</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if pending_students %}
+                        {% for std in pending_students %}
+                            <tr>
+                                <td style="font-weight:600; color:#fff;">{{ std.firstname }} {{ std.lastname }}</td>
+                                <td>{{ std.qualification }} ({{ std.stream }})</td>
+                                <td>
+                                    <div style="display:flex; gap:4px;">
+                                        <form action="{{ url_for('admin.change_student_status', user_id=std.id_user, status_code=1) }}" method="POST">
+                                            <button type="submit" class="btn-secondary" style="padding:4px 8px; font-size:10px; color:var(--color-success); border-color:rgba(16,185,129,0.2);">Approve</button>
+                                        </form>
+                                        <form action="{{ url_for('admin.change_student_status', user_id=std.id_user, status_code=0) }}" method="POST">
+                                            <button type="submit" class="btn-danger" style="padding:4px 8px; font-size:10px; border-radius:6px;">Reject</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="3" style="text-align:center; padding:20px; color:var(--text-muted);">
+                                No pending student registrations.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pending Recruiters -->
+    <div class="glass-panel section-card" style="margin-bottom:0;">
+        <div class="section-header">
+            <h3 class="section-title">Pending Recruiters ({{ stats.pending_companies }})</h3>
+            <a href="{{ url_for('admin.manage_companies') }}" class="btn-secondary" style="font-size:11px; padding:4px 8px;">View All</a>
+        </div>
+        
+        <div class="custom-table-container">
+            <table class="custom-table" style="font-size:13px;">
+                <thead>
+                    <tr>
+                        <th>Recruiter</th>
+                        <th>Location</th>
+                        <th>Approval</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if pending_companies %}
+                        {% for comp in pending_companies %}
+                            <tr>
+                                <td style="font-weight:600; color:#fff;">
+                                    <div>{{ comp.companyname }}</div>
+                                    <div style="font-size:10px; color:var(--text-muted);">HR: {{ comp.name }}</div>
+                                </td>
+                                <td>{{ comp.city }}, {{ comp.state }}</td>
+                                <td>
+                                    <div style="display:flex; gap:4px;">
+                                        <form action="{{ url_for('admin.change_company_status', company_id=comp.id_company, status_code=1) }}" method="POST">
+                                            <button type="submit" class="btn-secondary" style="padding:4px 8px; font-size:10px; color:var(--color-success); border-color:rgba(16,185,129,0.2);">Approve</button>
+                                        </form>
+                                        <form action="{{ url_for('admin.change_company_status', company_id=comp.id_company, status_code=0) }}" method="POST">
+                                            <button type="submit" class="btn-danger" style="padding:4px 8px; font-size:10px; border-radius:6px;">Reject</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="3" style="text-align:center; padding:20px; color:var(--text-muted);">
+                                No pending recruiter registrations.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

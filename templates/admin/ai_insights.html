@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}AI Insights Dashboard | Placement Portal{% endblock %}
+
+{% block dashboard_title %}AI Placement Insights{% endblock %}
+
+{% block content %}
+<div class="page-subtitle" style="margin-bottom:30px;">
+    Comparative gap analytics mapping graduating student skill categories to active recruitment drives.
+</div>
+
+<div class="dashboard-layout" style="grid-template-columns: 1.8fr 1.2fr;">
+    <!-- Left Panel: Industry Gap Charts -->
+    <div>
+        <div class="glass-panel section-card">
+            <h3 class="section-title" style="margin-bottom:24px;">Student Talent Pool vs. Recruiting Drives</h3>
+            
+            <div style="display:flex; flex-direction:column; gap:24px;">
+                {% for item in insights %}
+                    <div style="background:rgba(255,255,255,0.015); border:1px solid rgba(255,255,255,0.03); border-radius:12px; padding:20px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                            <div style="font-weight:700; font-size:15px; color:#fff;">{{ item.sector }}</div>
+                            <div style="font-size:12px; color:var(--text-muted);">
+                                {{ item.student_count }} Students ({{ item.student_percentage }}%) | {{ item.job_count }} Job Drives ({{ item.job_percentage }}%)
+                            </div>
+                        </div>
+                        
+                        <!-- Double bar chart comparison -->
+                        <div style="display:flex; flex-direction:column; gap:8px;">
+                            <!-- Student talent bar -->
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <span style="font-size:11px; width:70px; text-align:right; color:var(--text-muted);">Students:</span>
+                                <div style="flex-grow:1; background:rgba(255,255,255,0.05); height:8px; border-radius:4px; overflow:hidden;">
+                                    <div style="background:linear-gradient(90deg, #a855f7 0%, #6366f1 100%); width:{{ item.student_percentage }}%; height:100%; border-radius:4px; transition: width 0.8s ease;"></div>
+                                </div>
+                                <span style="font-size:11.5px; width:35px; font-weight:600; color:#c084fc;">{{ item.student_percentage }}%</span>
+                            </div>
+                            
+                            <!-- Job openings bar -->
+                            <div style="display:flex; align-items:center; gap:12px;">
+                                <span style="font-size:11px; width:70px; text-align:right; color:var(--text-muted);">Job Drives:</span>
+                                <div style="flex-grow:1; background:rgba(255,255,255,0.05); height:8px; border-radius:4px; overflow:hidden;">
+                                    <div style="background:linear-gradient(90deg, #06b6d4 0%, #0891b2 100%); width:{{ item.job_percentage }}%; height:100%; border-radius:4px; transition: width 0.8s ease;"></div>
+                                </div>
+                                <span style="font-size:11.5px; width:35px; font-weight:600; color:#22d3ee;">{{ item.job_percentage }}%</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Status text -->
+                        <div style="margin-top:14px; display:flex; justify-content:space-between; align-items:center; font-size:12.5px;">
+                            <span style="color:var(--text-muted);">Market Status:</span>
+                            {% if item.gap > 15 %}
+                                <span style="color:var(--color-warning); font-weight:600;"><i class="fa-solid fa-triangle-exclamation"></i> Talent Surplus (Drives Needed)</span>
+                            {% elif item.gap < -15 %}
+                                <span style="color:var(--color-info); font-weight:600;"><i class="fa-solid fa-circle-info"></i> Job Surplus (Talent Shortage)</span>
+                            {% else %}
+                                <span style="color:var(--color-success); font-weight:600;"><i class="fa-solid fa-circle-check"></i> Balanced Sector</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Panel: AI Recommendation & Invite Strategy -->
+    <div>
+        <div class="glass-panel section-card" style="border-color: rgba(168, 85, 247, 0.35); background: linear-gradient(to bottom right, rgba(17, 24, 39, 0.7), rgba(168, 85, 247, 0.05));">
+            <h3 class="section-title" style="margin-bottom:20px; color:#fff;"><i class="fa-solid fa-brain" style="color:#c084fc; margin-right:4px;"></i> AI Recruitment Strategy</h3>
+            
+            <div style="display:flex; flex-direction:column; gap:20px;">
+                {% if suggestions %}
+                    {% for sug in suggestions %}
+                        <div style="background:rgba(255, 255, 255, 0.02); border:1px solid rgba(168, 85, 247, 0.15); border-radius:12px; padding:16px; font-size:13.5px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                                <span style="font-weight:700; color:#fff; font-size:14px;">{{ sug.sector }} GAP</span>
+                                <span class="badge badge-rejected" style="font-size:9.5px; padding:1px 6px;">+{{ sug.surplus_percentage }}% Mismatch</span>
+                            </div>
+                            
+                            <p style="color:var(--text-muted); line-height:1.5; margin-bottom:12px;">
+                                There are <strong>{{ sug.unaligned_candidates }} candidates</strong> interested in {{ sug.sector }} with a lack of visiting drives.
+                            </p>
+                            
+                            <div style="font-size:12.5px; border-left:2px solid var(--color-warning); padding-left:10px; margin-bottom:14px; color:var(--text-muted);">
+                                <strong>AI Recommendation:</strong> {{ sug.action }}
+                            </div>
+                            
+                            <div style="display:flex; flex-direction:column; gap:8px;">
+                                <div style="font-size:11.5px; font-weight:600; color:var(--text-muted);">Target Organizations:</div>
+                                <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                                    {% for company in sug.companies_to_invite %}
+                                        <span style="font-size:11px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); padding:2px 8px; border-radius:4px; color:#fff;">
+                                            {{ company }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <button type="button" class="btn-primary" style="width:100%; justify-content:center; padding:8px; font-size:12px; margin-top:14px; box-shadow:none;" onclick="alert('Mock email invitation draft prepared and saved to database archives.');">
+                                <i class="fa-solid fa-paper-plane"></i> Invite Recruiters
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="text-align:center; padding:20px; color:var(--text-muted); font-size:13.5px;">
+                        <i class="fa-solid fa-circle-check" style="font-size:28px; color:var(--color-success); margin-bottom:8px; display:block;"></i>
+                        No talent mismatches detected. Active job drives correspond well to student profiles.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Job opening | PlaceTrack AI{% endblock %}
+
+{% block dashboard_title %}Modify Job Posting{% endblock %}
+
+{% block content %}
+<div class="glass-panel section-card" style="max-width: 700px; margin: 0 auto;">
+    <div class="section-header" style="margin-bottom:24px;">
+        <h3 class="section-title">Edit Job Drive Details</h3>
+        <a href="{{ url_for('company.manage_jobs') }}" class="btn-secondary" style="font-size:12px; padding:6px 12px;">Back to List</a>
+    </div>
+
+    <form action="{{ url_for('company.edit_job', job_id=job.id_jobpost) }}" method="POST" style="display:flex; flex-direction:column; gap:20px;">
+        <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="jobtitle">Job Title</label>
+            <input type="text" id="jobtitle" name="jobtitle" class="form-control" value="{{ job.jobtitle }}" required>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="minimumsalary">Minimum Salary</label>
+                <input type="text" id="minimumsalary" name="minimumsalary" class="form-control" value="{{ job.minimumsalary }}" required>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="maximumsalary">Maximum Salary</label>
+                <input type="text" id="maximumsalary" name="maximumsalary" class="form-control" value="{{ job.maximumsalary }}" required>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="experience">Experience Level Required</label>
+                <input type="text" id="experience" name="experience" class="form-control" value="{{ job.experience }}" required>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="qualification">Minimum Qualification Required</label>
+                <input type="text" id="qualification" name="qualification" class="form-control" value="{{ job.qualification }}" required>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="description">Detailed Job Description</label>
+            <textarea id="description" name="description" class="form-control" rows="8" required>{{ job.description }}</textarea>
+        </div>
+
+        <button type="submit" class="btn-primary" style="justify-content:center; padding:12px; font-size:15px; margin-top:10px;">
+            <i class="fa-solid fa-save"></i> Save Job Modifications
+        </button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block title %}Candidate Dashboard | PlaceTrack AI{% endblock %}
+
+{% block dashboard_title %}Candidate Dashboard{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="glass-panel stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-file-invoice"></i></div>
+        <div class="stat-value">{{ applied_count }}</div>
+        <div class="stat-label">Applications Submitted</div>
+    </div>
+    
+    <div class="glass-panel stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-briefcase"></i></div>
+        <div class="stat-value">{{ active_jobs }}</div>
+        <div class="stat-label">Active Job Openings</div>
+    </div>
+
+    <div class="glass-panel stat-card" style="grid-column: span 2;">
+        <div class="stat-icon" style="color:var(--color-success); background:var(--color-success-glow);"><i class="fa-solid fa-percent"></i></div>
+        <div class="stat-value">{{ completeness }}%</div>
+        <div class="stat-label">Profile Completeness</div>
+        <div class="progress-container" style="margin-top:12px;">
+            <div class="progress-bar" style="width: {{ completeness }}%;"></div>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-layout">
+    <!-- Left Column: Notices and Active Applications -->
+    <div>
+        <!-- Notice Board -->
+        <div class="glass-panel section-card">
+            <h3 class="section-title" style="margin-bottom:20px;">Announcements &amp; Notices</h3>
+            <div class="notice-list">
+                {% if notices %}
+                    {% for notice in notices %}
+                        <div class="notice-item {{ notice.audience }}">
+                            <h4 style="font-weight:700; font-size:15.5px; color:#fff; margin-bottom:6px;">{{ notice.subject }}</h4>
+                            <p style="font-size:13.5px; color:var(--text-muted); line-height:1.6;">{{ notice.notice }}</p>
+                            <div class="notice-meta">
+                                <span><i class="fa-regular fa-clock"></i> {{ notice.date.strftime('%Y-%m-%d %H:%M') }}</span>
+                                <span class="badge {% if notice.audience == 'all' %}badge-active{% else %}badge-under-review{% endif %}" style="font-size:9.5px; padding:2px 8px;">
+                                    Audience: {{ notice.audience }}
+                                </span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="text-align:center; padding:20px; color:var(--text-muted);">
+                        <i class="fa-regular fa-bell-slash" style="font-size:24px; margin-bottom:8px; display:block;"></i>
+                        No active notices. Check back later!
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- AI Recommended Job Drives -->
+        <div class="glass-panel section-card" style="border-color: rgba(168, 85, 247, 0.3); background: linear-gradient(to bottom right, rgba(17, 24, 39, 0.7), rgba(168, 85, 247, 0.05));">
+            <div class="section-header">
+                <h3 class="section-title"><i class="fa-solid fa-wand-magic-sparkles" style="color:#a855f7; margin-right:4px;"></i> AI Job Match Recommendations</h3>
+                <span style="font-size:11px; color:var(--text-muted);">Real-time Profile Matching</span>
+            </div>
+            
+            <div style="display:flex; flex-direction:column; gap:16px;">
+                {% if recommended_jobs %}
+                    {% for rec in recommended_jobs %}
+                        <div style="background:rgba(255,255,255,0.015); border:1px solid rgba(255,255,255,0.03); border-radius:12px; padding:16px; display:flex; justify-content:space-between; align-items:center; gap:16px;">
+                            <div style="flex-grow:1;">
+                                <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px;">
+                                    <h4 style="font-weight:700; font-size:15px; color:#fff;">{{ rec.job.jobtitle }}</h4>
+                                    <span class="badge" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%); color:#c084fc; border:1px solid rgba(168,85,247,0.3); font-size:11px; padding:2px 8px;">
+                                        {{ rec.score }}% Match
+                                    </span>
+                                </div>
+                                <div style="font-size:12.5px; color:var(--color-primary); font-weight:600; margin-bottom:10px;">
+                                    {{ rec.job.company.companyname }}
+                                </div>
+                                
+                                <div style="font-size:12px; color:var(--text-muted); line-height:1.5; margin-bottom:8px;">
+                                    {{ rec.message }}
+                                </div>
+                                
+                                <div style="display:flex; flex-wrap:wrap; gap:6px; font-size:11px;">
+                                    {% if rec.matched_skills %}
+                                        {% for s in rec.matched_skills %}
+                                            <span style="color:var(--color-success); background:var(--color-success-glow); padding:2px 6px; border-radius:4px; border:1px solid rgba(16,185,129,0.15);">
+                                                ✓ {{ s }}
+                                            </span>
+                                        {% endfor %}
+                                    {% endif %}
+                                    {% if rec.missing_skills %}
+                                        {% for s in rec.missing_skills %}
+                                            <span style="color:var(--text-muted); background:rgba(255,255,255,0.03); padding:2px 6px; border-radius:4px; border:1px solid rgba(255,255,255,0.05);">
+                                                + {{ s }}
+                                            </span>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <a href="{{ url_for('student.apply', job_id=rec.job.id_jobpost) }}" class="btn-primary" style="padding:8px 16px; font-size:12px; box-shadow:none;">Apply</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="text-align:center; padding:10px; color:var(--text-muted); font-size:13.5px;">
+                        No active jobs available for recommendations at this moment.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Recent Applications -->
+        <div class="glass-panel section-card">
+            <div class="section-header">
+                <h3 class="section-title">Recent Job Applications</h3>
+                <a href="{{ url_for('student.applied_jobs') }}" class="btn-secondary" style="font-size:12px; padding:6px 12px;">View All</a>
+            </div>
+            
+            <div class="custom-table-container">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Job Title</th>
+                            <th>Company</th>
+                            <th>Date Applied</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if applications %}
+                            {% for app in applications %}
+                                <tr>
+                                    <td style="font-weight:600; color:#fff;">{{ app.job_post.jobtitle }}</td>
+                                    <td style="color:var(--text-muted);">{{ app.company.companyname }}</td>
+                                    <td>{{ app.id_apply }}</td> <!-- Fake apply date/id standard -->
+                                    <td>
+                                        {% if app.status == 2 %}
+                                            <span class="badge badge-pending">Pending</span>
+                                        {% elif app.status == 1 %}
+                                            <span class="badge badge-selected">Selected</span>
+                                        {% elif app.status == 0 %}
+                                            <span class="badge badge-rejected">Rejected</span>
+                                        {% elif app.status == 3 %}
+                                            <span class="badge badge-under-review">Under Review</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="4" style="text-align:center; padding:30px; color:var(--text-muted);">
+                                    You have not applied for any jobs yet. Expose your resume and apply!
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Quick Navigation and Actions -->
+    <div>
+        <!-- AI Profile Insights -->
+        <div class="glass-panel section-card" style="margin-bottom:24px; border-color: rgba(99, 102, 241, 0.25); background: linear-gradient(to bottom right, rgba(17, 24, 39, 0.7), rgba(99, 102, 241, 0.05));">
+            <h3 class="section-title" style="margin-bottom:16px;">AI Profile Insights</h3>
+            
+            <div style="display:flex; flex-direction:column; gap:12px; text-align:center; padding:10px 0;">
+                <div style="width:70px; height:70px; border-radius:50%; background: linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(168,85,247,0.1) 100%); display:flex; align-items:center; justify-content:center; margin:0 auto 10px; border:2px solid rgba(168, 85, 247, 0.3); color:#c084fc; font-size:28px;">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                
+                <div>
+                    <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted); font-weight:700; letter-spacing:0.5px;">Primary Placement Sector</span>
+                    <h4 style="font-size:18px; font-weight:800; color:#fff; margin-top:4px;">{{ ai_sector }}</h4>
+                    <span class="badge badge-selected" style="font-size:10px; padding:2px 8px; margin-top:6px;">{{ ai_confidence }}% AI Confidence</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-panel section-card">
+            <h3 class="section-title" style="margin-bottom:20px;">Quick Actions</h3>
+            
+            <div style="display:flex; flex-direction:column; gap:16px;">
+                <a href="{{ url_for('student.profile') }}" class="glass-panel" style="padding:16px; display:flex; align-items:center; gap:16px; border-color:transparent;">
+                    <div style="width:40px; height:40px; border-radius:10px; background:rgba(99,102,241,0.1); color:var(--color-primary); display:flex; align-items:center; justify-content:center; font-size:18px;">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight:600; font-size:14.5px; color:#fff;">Update Profile</div>
+                        <div style="font-size:11.5px; color:var(--text-muted);">Upload resume &amp; academic stats</div>
+                    </div>
+                </a>
+
+                <a href="{{ url_for('main.jobs') }}" class="glass-panel" style="padding:16px; display:flex; align-items:center; gap:16px; border-color:transparent;">
+                    <div style="width:40px; height:40px; border-radius:10px; background:rgba(16,185,129,0.1); color:var(--color-success); display:flex; align-items:center; justify-content:center; font-size:18px;">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight:600; font-size:14.5px; color:#fff;">Find Job Drives</div>
+                        <div style="font-size:11.5px; color:var(--text-muted);">Search and apply for openings</div>
+                    </div>
+                </a>
+
+                <a href="{{ url_for('student.mailbox') }}" class="glass-panel" style="padding:16px; display:flex; align-items:center; gap:16px; border-color:transparent;">
+                    <div style="width:40px; height:40px; border-radius:10px; background:rgba(245,158,11,0.1); color:var(--color-warning); display:flex; align-items:center; justify-content:center; font-size:18px;">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight:600; font-size:14.5px; color:#fff;">Inquire Message</div>
+                        <div style="font-size:11.5px; color:var(--text-muted);">Send message to recruiter cell</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

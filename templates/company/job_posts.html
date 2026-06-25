@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Job Postings | PlaceTrack AI{% endblock %}
+
+{% block dashboard_title %}Manage Job Openings{% endblock %}
+
+{% block content %}
+<div class="glass-panel section-card">
+    <div class="section-header">
+        <h3 class="section-title">Active Job Drive List</h3>
+        <a href="{{ url_for('company.create_job') }}" class="btn-primary" style="font-size:13px; padding:8px 18px;">
+            <i class="fa-solid fa-plus"></i> Post Job Drive
+        </a>
+    </div>
+
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Job Title</th>
+                    <th>Salary Package</th>
+                    <th>Experience Required</th>
+                    <th>Minimum Qualification</th>
+                    <th>Candidates Applied</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if jobs %}
+                    {% for job in jobs %}
+                        <tr>
+                            <td style="font-weight:600; color:#fff;">{{ job.jobtitle }}</td>
+                            <td>₹ {{ job.minimumsalary }} - {{ job.maximumsalary }} PM</td>
+                            <td>{{ job.experience }}</td>
+                            <td>{{ job.qualification }}</td>
+                            <td>
+                                <span class="badge badge-under-review" style="font-weight:600;">
+                                    {{ job.applications | length }} Candidates
+                                </span>
+                            </td>
+                            <td>
+                                <div style="display:flex; gap:8px; align-items:center;">
+                                    <a href="{{ url_for('company.edit_job', job_id=job.id_jobpost) }}" class="btn-secondary" style="font-size:12px; padding:6px 12px; display:inline-flex; align-items:center; gap:4px;">
+                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                    </a>
+                                    <form action="{{ url_for('company.delete_job', job_id=job.id_jobpost) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this job posting? All student applications for this job will also be removed.');" style="display:inline;">
+                                        <button type="submit" class="btn-danger" style="padding:6px 12px; font-size:12px;">
+                                            <i class="fa-solid fa-trash-can"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align:center; padding:40px; color:var(--text-muted);">
+                            <i class="fa-solid fa-folder-open" style="font-size:36px; margin-bottom:12px; display:block; color:var(--color-primary);"></i>
+                            You have not posted any job openings. Click "Post Job Drive" to launch your first opening!
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

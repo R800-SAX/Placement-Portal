@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PlaceTrack AI{% endblock %}</title>
+    
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+
+    {% if current_user.is_authenticated %}
+    <!-- DASHBOARD VIEW LAYOUT (AUTHENTICATED) -->
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-graduation-cap text-white text-lg"></i>
+                </div>
+                <div class="logo-text">PlaceTrack AI</div>
+            </div>
+            
+            <ul class="sidebar-menu">
+                {% if current_user_role == 'student' %}
+                    <li class="menu-item {% if request.endpoint == 'student.dashboard' %}active{% endif %}">
+                        <a href="{{ url_for('student.dashboard') }}"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                    </li>
+                    <li class="menu-item {% if request.endpoint == 'student.profile' %}active{% endif %}">
+                        <a href="{{ url_for('student.profile') }}"><i class="fa-solid fa-user-pen"></i> My Profile</a>
+                    </li>
+                    <li class="menu-item {% if request.endpoint == 'student.applied_jobs' %}active{% endif %}">
+                        <a href="{{ url_for('student.applied_jobs') }}"><i class="fa-solid fa-briefcase"></i> Applied Jobs</a>
+                    </li>
+                    <li class="menu-item {% if request.endpoint == 'main.jobs' %}active{% endif %}">
+                        <a href="{{ url_for('main.jobs') }}"><i class="fa-solid fa-magnifying-glass"></i> Find Jobs</a>
+                    </li>
+                    <li class="menu-item {% if request.endpoint == 'student.mailbox' %}active{% endif %}">
+                        <a href="{{ url_for('student.mailbox') }}"><i class="fa-solid fa-envelope"></i> Message Center</a>
+                    </li>
+                {% elif current_user_role == 'company' %}
+                    <li class="menu-item {% if request.endpoint == 'company.dashboard' %}active{% endif %}">
+                        <a href="{{ url_for('company.dashboard') }}"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                    </li>
+                    <li class="menu-item {% if request.endpoint == 'company.profile' %}active{% endif %}">
+                        <a href="{{ url_for('company.profile') }}"><i class="fa-solid fa-building-user"></i> Company Profile</a>
+                    </li>
+                    <li class="menu-item {% if request.endpoint == 'company.manage_jobs' or request.endpoint == 'company.create_job' or request.endpoint == 'company.edit_job' %}active{% endif %}">
+                        <a href="{{ url_for('company.manage_jobs') }}"><i class="fa-solid fa-file-contract"></i> Manage Jobs</a>
+                    </li>
+                    <li class="menu-item {% if request.endpoint == 'company.view_applicants' %}active{% endif %}">
+                        <a href="{{ url_for('company.view_applicants') }}"><i class="fa-solid fa-users-viewfinder"></i> Applicants</a>
+                    </li>
+                    <li class="menu-item {% if request.endpoint == 'company.mailbox' %}active{% endif %}">
+                        <a href="{{ url_for('company.mailbox') }}"><i class="fa-solid fa-envelope"></i> Mailbox</a>
+                    </li>
+                {% elif current_user_role == 'admin' %}
+                    <li class="menu-item {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
+                        <a href="{{ url_for('admin.dashboard') }}"><i class="fa-solid fa-chart-pie"></i> Admin Panel</a>
+                    </li>
+                    <li class="menu-item {% if request.endpoint == 'admin.ai_insights' %}active{% endif %}">
+                        <a href="{{ url_for('admin.ai_insights') }}"><i class="fa-solid fa-brain"></i> AI Insights</a>
+                    </li>
+                    <li class="menu-item {% if request.endpoint == 'admin.manage_students' %}active{% endif %}">
+                        <a href="{{ url_for('admin.manage_students') }}"><i class="fa-solid fa-user-check"></i> Candidates</a>
+                    </li>
+                    <li class="menu-item {% if request.endpoint == 'admin.manage_companies' %}active{% endif %}">
+                        <a href="{{ url_for('admin.manage_companies') }}"><i class="fa-solid fa-building-circle-check"></i> Recruiters</a>
+                    </li>
+                    <li class="menu-item {% if request.endpoint == 'admin.manage_notices' %}active{% endif %}">
+                        <a href="{{ url_for('admin.manage_notices') }}"><i class="fa-solid fa-bullhorn"></i> Notice Board</a>
+                    </li>
+                    <li class="menu-item {% if request.endpoint == 'admin.manage_jobs' %}active{% endif %}">
+                        <a href="{{ url_for('admin.manage_jobs') }}"><i class="fa-solid fa-boxes-packing"></i> Audit Jobs</a>
+                    </li>
+                {% endif %}
+                
+                <li class="menu-item">
+                    <a href="{{ url_for('main.index') }}"><i class="fa-solid fa-globe"></i> Back to Portal</a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile-badge">
+                    {% if current_user_role == 'student' %}
+                        <div class="avatar" style="background:#4f46e5; display:flex; align-items:center; justify-content:center; font-weight:bold;">
+                            {{ current_user.firstname[0] }}
+                        </div>
+                        <div class="badge-info">
+                            <span class="badge-name">{{ current_user.firstname }}</span>
+                            <span class="badge-role">Student</span>
+                        </div>
+                    {% elif current_user_role == 'company' %}
+                        {% if current_user.logo and current_user.logo != 'default_logo.png' %}
+                            <img src="{{ url_for('static', filename='uploads/logos/' + current_user.logo) }}" alt="logo" class="avatar">
+                        {% else %}
+                            <div class="avatar" style="background:#7c3aed; display:flex; align-items:center; justify-content:center; font-weight:bold;">
+                                {{ current_user.companyname[0] }}
+                            </div>
+                        {% endif %}
+                        <div class="badge-info">
+                            <span class="badge-name" title="{{ current_user.companyname }}">{{ current_user.companyname }}</span>
+                            <span class="badge-role">Recruiter</span>
+                        </div>
+                    {% elif current_user_role == 'admin' %}
+                        <div class="avatar" style="background:#db2777; display:flex; align-items:center; justify-content:center; font-weight:bold;">
+                            A
+                        </div>
+                        <div class="badge-info">
+                            <span class="badge-name">Admin</span>
+                            <span class="badge-role">Administrator</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Wrapper Panel -->
+        <div class="main-wrapper">
+            <header class="navbar">
+                <div class="hamburger">
+                    <i class="fa-solid fa-bars"></i>
+                </div>
+                
+                <div style="font-weight: 600; font-size: 18px; color: var(--text-main);">
+                    {% block dashboard_title %}Portal Dashboard{% endblock %}
+                </div>
+                
+                <div class="nav-actions">
+                    <a href="{{ url_for('auth.logout') }}" class="logout-btn">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                    </a>
+                </div>
+            </header>
+            
+            <main class="content-body">
+                <!-- Flash Notification Banner -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-container">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category if category != 'error' else 'danger' }}">
+                                    <i class="fa-solid {% if category == 'success' %}fa-circle-check{% elif category == 'danger' %}fa-circle-xmark{% else %}fa-circle-info{% endif %}"></i>
+                                    <span>{{ message }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+    
+    {% else %}
+    <!-- PUBLIC VIEW LAYOUT (UNAUTHENTICATED) -->
+    <header class="public-navbar-container" style="background: rgba(15, 23, 42, 0.9); border-bottom: 1px solid var(--border-color); sticky: top; z-index: 100;">
+        <div class="public-container" style="padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto;">
+            <a href="{{ url_for('main.index') }}" style="display:flex; align-items:center; gap:10px; font-weight:700; font-size:20px;">
+                <div class="logo-icon" style="width:34px; height:34px;">
+                    <i class="fa-solid fa-graduation-cap text-white"></i>
+                </div>
+                <span class="logo-text">PlaceTrack AI</span>
+            </a>
+            
+            <nav style="display:flex; align-items:center; gap:35px;">
+                <ul class="nav-links" style="list-style:none; display:flex; gap:25px; margin:0;">
+                    <li><a href="{{ url_for('main.index') }}" style="font-weight:500;">Home</a></li>
+                    <li><a href="{{ url_for('main.jobs') }}" style="font-weight:500;">Job Board</a></li>
+                    <li><a href="{{ url_for('main.about') }}" style="font-weight:500;">About Us</a></li>
+                    <li><a href="{{ url_for('main.contact') }}" style="font-weight:500;">Contact</a></li>
+                    <li><a href="{{ url_for('main.faq') }}" style="font-weight:500;">FAQs</a></li>
+                </ul>
+                
+                <a href="{{ url_for('auth.login') }}" class="btn-primary" style="padding: 8px 20px; font-size:13px; box-shadow:none;">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In / Register
+                </a>
+            </nav>
+        </div>
+    </header>
+    
+    <main class="public-container">
+        <!-- Flash Notification Banner -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-container">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category if category != 'error' else 'danger' }}">
+                            <i class="fa-solid {% if category == 'success' %}fa-circle-check{% elif category == 'danger' %}fa-circle-xmark{% else %}fa-circle-info{% endif %}"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        {% block public_content %}{% endblock %}
+    </main>
+    
+    <footer style="background: rgba(15, 23, 42, 0.95); border-top: 1px solid var(--border-color); padding: 40px 0; margin-top: 80px;">
+        <div class="public-container" style="max-width:1200px; margin:0 auto; padding:0 20px; display:flex; flex-direction:column; gap:20px; text-align:center;">
+            <div style="font-weight:700; color:var(--text-main); font-size:16px;">
+                PlaceTrack AI &copy; {{ current_year }}
+            </div>
+
+        </div>
+    </footer>
+    {% endif %}
+
+    <!-- PlaceTrack AI Support Chatbot -->
+    <div id="chatbot-container" class="chatbot-container">
+        <!-- Chatbot Button -->
+        <button id="chatbot-trigger" class="chatbot-trigger" aria-label="Open Chatbot">
+            <i class="fa-solid fa-message"></i>
+            <span class="chatbot-notification-dot"></span>
+        </button>
+
+        <!-- Chat Window -->
+        <div id="chatbot-window" class="chatbot-window hidden">
+            <div class="chatbot-header">
+                <div class="chatbot-info">
+                    <div class="chatbot-avatar">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <div>
+                        <div class="chatbot-title">PlaceTrack AI Assistant</div>
+                        <div class="chatbot-status">
+                            <span class="status-dot"></span> Online
+                        </div>
+                    </div>
+                </div>
+                <button id="chatbot-close" class="chatbot-close-btn" aria-label="Close Chat">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div id="chatbot-messages" class="chatbot-messages">
+                <div class="chatbot-message incoming">
+                    Hello! I'm your PlaceTrack AI Assistant. How can I help you today?
+                </div>
+            </div>
+            
+            <form id="chatbot-form" class="chatbot-input-area">
+                <input type="text" id="chatbot-input" placeholder="Type a message..." required autocomplete="off">
+                <button type="submit" class="chatbot-send-btn" aria-label="Send Message">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

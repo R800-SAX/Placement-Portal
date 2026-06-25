@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile | PlaceTrack AI{% endblock %}
+
+{% block dashboard_title %}Edit Candidate Profile{% endblock %}
+
+{% block content %}
+<div class="glass-panel section-card" style="max-width: 800px; margin: 0 auto;">
+    <h3 class="section-title" style="margin-bottom:24px;">Update Your Information</h3>
+    
+    <form action="{{ url_for('student.profile') }}" method="POST" enctype="multipart/form-data" style="display:flex; flex-direction:column; gap:24px;">
+        
+        <h4 style="font-size:15px; font-weight:700; color:var(--color-primary); border-bottom: 1px solid var(--border-color); padding-bottom:6px;">Personal Details</h4>
+        
+        <div class="form-grid">
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="firstname">First Name</label>
+                <input type="text" id="firstname" name="firstname" class="form-control" value="{{ current_user.firstname }}" required>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="lastname">Last Name</label>
+                <input type="text" id="lastname" name="lastname" class="form-control" value="{{ current_user.lastname }}" required>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Email Address (Registered)</label>
+                <input type="email" class="form-control" value="{{ current_user.email }}" readonly style="opacity: 0.6; cursor: not-allowed;">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="contactno">Contact Number</label>
+                <input type="tel" id="contactno" name="contactno" class="form-control" value="{{ current_user.contactno or '' }}" required>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="dob">Date of Birth</label>
+                <input type="date" id="dob" name="dob" class="form-control" value="{{ current_user.dob or '' }}" required>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="age">Age</label>
+                <input type="number" id="age" name="age" class="form-control" value="{{ current_user.age or '' }}" required>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="address">Mailing Address</label>
+            <textarea id="address" name="address" class="form-control" rows="2" required>{{ current_user.address or '' }}</textarea>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Current State</label>
+                <input type="text" class="form-control" value="{{ current_user.state or 'Not Selected' }}" readonly style="opacity: 0.8;">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Current City</label>
+                <input type="text" class="form-control" value="{{ current_user.city or 'Not Selected' }}" readonly style="opacity: 0.8;">
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="aboutme">About Me (Short Bio)</label>
+            <textarea id="aboutme" name="aboutme" class="form-control" rows="3" placeholder="State your profile goals, career interests...">{{ current_user.aboutme or '' }}</textarea>
+        </div>
+
+        <h4 style="font-size:15px; font-weight:700; color:var(--color-primary); border-bottom: 1px solid var(--border-color); padding-bottom:6px; margin-top:10px;">Academic Stats</h4>
+
+        <div class="form-grid">
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="qualification">Degree / Qualification</label>
+                <input type="text" id="qualification" name="qualification" class="form-control" value="{{ current_user.qualification or '' }}" required>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="stream">Branch / Specialization</label>
+                <input type="text" id="stream" name="stream" class="form-control" value="{{ current_user.stream or '' }}" required>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="passingyear">Graduation Year</label>
+                <input type="number" id="passingyear" name="passingyear" class="form-control" value="{{ current_user.passingyear or '' }}" required>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="skills">Skills Tag (Comma Separated)</label>
+                <input type="text" id="skills" name="skills" class="form-control" value="{{ current_user.skills or '' }}" required>
+            </div>
+        </div>
+
+        <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));">
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="ssc">10th Grade (%)</label>
+                <input type="number" id="ssc" name="ssc" class="form-control" value="{{ current_user.ssc or 0 }}" required>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="hsc">12th Grade (%)</label>
+                <input type="text" id="hsc" name="hsc" class="form-control" value="{{ current_user.hsc or '' }}" required>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="ug">UG Percentage / CGPA (%)</label>
+                <input type="number" id="ug" name="ug" class="form-control" value="{{ current_user.ug or 0 }}" required>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="pg">PG Percentage (%) (Optional)</label>
+                <input type="number" id="pg" name="pg" class="form-control" value="{{ current_user.pg or 0 }}">
+            </div>
+        </div>
+
+        <h4 style="font-size:15px; font-weight:700; color:var(--color-primary); border-bottom: 1px solid var(--border-color); padding-bottom:6px; margin-top:10px;">Resume Portfolio</h4>
+        
+        <div style="display:flex; flex-direction:column; gap:12px;">
+            <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+                <label class="btn-secondary" style="cursor:pointer; padding:12px 24px;">
+                    <i class="fa-solid fa-file-arrow-up"></i> Choose Resume File
+                    <input type="file" id="resume-upload" name="resume" style="display:none;" accept=".pdf,.doc,.docx">
+                </label>
+                <span id="resume-label" style="font-size:13.5px; color:var(--text-muted);">
+                    {{ current_user.resume if current_user.resume else 'No resume uploaded yet (PDF, DOC, DOCX under 16MB)' }}
+                </span>
+            </div>
+            
+            {% if current_user.resume %}
+                <div style="margin-top:10px;">
+                    <a href="{{ url_for('static', filename='uploads/resumes/' + current_user.resume) }}" target="_blank" class="btn-secondary" style="font-size:13px; padding:8px 16px; border-color:var(--color-success); color:var(--color-success);">
+                        <i class="fa-solid fa-file-pdf"></i> View Current Resume
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn-primary" style="justify-content:center; padding:12px; font-size:15px; margin-top:20px;">
+            <i class="fa-solid fa-save"></i> Save Profile Modifications
+        </button>
+    </form>
+</div>
+{% endblock %}

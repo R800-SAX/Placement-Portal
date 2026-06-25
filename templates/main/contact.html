@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us | PlaceTrack AI{% endblock %}
+
+{% block public_content %}
+<div style="max-width: 900px; margin: 40px auto 0;">
+    <h1 style="font-size:36px; font-weight:800; text-align:center; margin-bottom:12px;">Get In Touch</h1>
+    <p style="color:var(--text-muted); text-align:center; margin-bottom:40px;">Have questions about registration, current placement drives, or corporate partnerships? Let us know.</p>
+    
+    <div style="display:grid; grid-template-columns: 1fr 1.5fr; gap:30px; align-items: stretch;">
+        <!-- Left: Contact Details -->
+        <div class="glass-panel" style="padding: 30px; display:flex; flex-direction:column; gap:24px; justify-content: space-between;">
+            <div>
+                <h3 style="font-size:18px; font-weight:700; color:var(--color-primary); margin-bottom:20px;">Contact Information</h3>
+                
+                <ul style="list-style:none; display:flex; flex-direction:column; gap:20px; font-size:14px; padding:0;">
+                    <li style="display:flex; align-items:flex-start; gap:12px;">
+                        <i class="fa-solid fa-location-dot" style="margin-top:4px; color:var(--color-primary);"></i>
+                        <span>Jaypee Institute of Information Technology, Sector 62, Noida, UP, India</span>
+                    </li>
+                    <li style="display:flex; align-items:center; gap:12px;">
+                        <i class="fa-solid fa-phone" style="color:var(--color-primary);"></i>
+                        <span>+91 120 2400973</span>
+                    </li>
+                    <li style="display:flex; align-items:center; gap:12px;">
+                        <i class="fa-solid fa-envelope" style="color:var(--color-primary);"></i>
+                        <span>placement@jiitoptica.org</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div style="background:rgba(255,255,255,0.02); border-radius:12px; border:1px solid rgba(255,255,255,0.04); height: 150px; display:flex; align-items:center; justify-content:center; text-align:center;">
+                <span style="font-size:12px; color:var(--text-muted); padding:20px;">
+                    <i class="fa-solid fa-map-location-dot" style="font-size:24px; margin-bottom:8px; display:block; color:var(--color-primary);"></i>
+                    Map Coordinates Placeholder
+                </span>
+            </div>
+        </div>
+        
+        <!-- Right: Contact Form -->
+        <div class="glass-panel" style="padding: 30px;">
+            <h3 style="font-size:18px; font-weight:700; margin-bottom:20px;">Send Us a Message</h3>
+            
+            <form action="{{ url_for('main.contact') }}" method="POST" style="display:flex; flex-direction:column; gap:16px;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label" for="name">Your Name</label>
+                    <input type="text" id="name" name="name" class="form-control" placeholder="Jane Doe" required>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label" for="email">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="jane@example.com" required>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label" for="subject">Subject</label>
+                    <input type="text" id="subject" name="subject" class="form-control" placeholder="General Inquiry" required>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label class="form-label" for="message">Message</label>
+                    <textarea id="message" name="message" class="form-control" rows="4" placeholder="How can we help you?" required></textarea>
+                </div>
+                
+                <button type="submit" class="btn-primary" style="justify-content:center; padding:12px 24px;">
+                    <i class="fa-solid fa-paper-plane"></i> Submit Message
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

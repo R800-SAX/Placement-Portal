@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}Mailbox | PlaceTrack AI{% endblock %}
+
+{% block dashboard_title %}Message Center{% endblock %}
+
+{% block content %}
+<div class="mailbox-layout">
+    <!-- Left panel: Inbox / Compose -->
+    <div class="mail-sidebar">
+        <!-- New Message Trigger Card -->
+        <div class="glass-panel" style="padding:16px; margin-bottom:12px;">
+            <button type="button" id="btn-show-compose" class="btn-primary" style="width:100%; justify-content:center;">
+                <i class="fa-solid fa-pen-to-square"></i> Compose Message
+            </button>
+        </div>
+
+        <!-- Inbox list -->
+        <h4 style="font-size:12px; text-transform:uppercase; color:var(--text-muted); font-weight:700; margin-bottom:8px; padding-left:4px;">Inbox Messages</h4>
+        {% if inbox %}
+            {% for mail in inbox %}
+                <a href="{{ url_for('student.mailbox', thread_id=mail.id_mailbox) }}" class="glass-panel mail-card {% if active_mail and active_mail.id_mailbox == mail.id_mailbox %}active{% endif %}" style="display:block; text-decoration:none; margin-bottom:10px;">
+                    <div style="font-weight:600; font-size:14px; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ mail.subject }}</div>
+                    <div style="font-size:12px; color:var(--color-primary); margin-top:2px;">From: {{ mail.fromuser.split(' ')[0] }}</div>
+                    <div style="font-size:10px; color:var(--text-muted); text-align:right; margin-top:8px;">
+                        <i class="fa-regular fa-clock"></i> {{ mail.createdAt.strftime('%b %d, %H:%M') }}
+                    </div>
+                </a>
+            {% endfor %}
+        {% else %}
+            <div style="text-align:center; padding:20px; color:var(--text-muted); font-size:13px;">No incoming messages.</div>
+        {% endif %}
+
+        <!-- Outbox list -->
+        <h4 style="font-size:12px; text-transform:uppercase; color:var(--text-muted); font-weight:700; margin-top:20px; margin-bottom:8px; padding-left:4px;">Sent Messages</h4>
+        {% if outbox %}
+            {% for mail in outbox %}
+                <a href="{{ url_for('student.mailbox', thread_id=mail.id_mailbox) }}" class="glass-panel mail-card {% if active_mail and active_mail.id_mailbox == mail.id_mailbox %}active{% endif %}" style="display:block; text-decoration:none; margin-bottom:10px;">
+                    <div style="font-weight:600; font-size:14px; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ mail.subject }}</div>
+                    <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">To: {{ mail.touser | capitalize }}</div>
+                    <div style="font-size:10px; color:var(--text-muted); text-align:right; margin-top:8px;">
+                        <i class="fa-regular fa-clock"></i> {{ mail.createdAt.strftime('%b %d, %H:%M') }}
+                    </div>
+                </a>
+            {% endfor %}
+        {% else %}
+            <div style="text-align:center; padding:20px; color:var(--text-muted); font-size:13px;">No sent messages.</div>
+        {% endif %}
+    </div>
+
+    <!-- Right panel: View / Compose Form -->
+    <div id="mailbox-main-panel" class="glass-panel" style="overflow: hidden;">
+        <!-- COMPOSE FORM (HIDDEN BY DEFAULT) -->
+        <div id="compose-form-panel" style="display:none; padding:30px; height:100%; flex-direction:column; justify-content:space-between;">
+            <div>
+                <h3 style="font-size:18px; font-weight:700; color:var(--color-primary); border-bottom:1px solid var(--border-color); padding-bottom:10px; margin-bottom:20px;">
+                    Compose New Message
+                </h3>
+                
+                <form id="new-message-form" action="{{ url_for('student.mailbox') }}" method="POST" style="display:flex; flex-direction:column; gap:16px;">
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label class="form-label" for="to_company">Recipient</label>
+                        <select id="to_company" name="to_company" class="form-control" required style="background:var(--bg-main); color:#fff;">
+                            <option value="">Select Recruiter / Department...</option>
+                            <option value="admin">College Placement Office (Admin)</option>
+                            {% for comp in companies %}
+                                <option value="{{ comp.id_company }}">{{ comp.companyname }} ({{ comp.name }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label class="form-label" for="subject">Subject</label>
+                        <input type="text" id="subject" name="subject" class="form-control" placeholder="Inquiry about current drive requirements..." required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label class="form-label" for="message">Message Body</label>
+                        <textarea id="message" name="message" class="form-control" rows="6" placeholder="Enter message text here..." required></textarea>
+                    </div>
+                    
+                    <div style="display:flex; gap:12px; margin-top:10px;">
+                        <button type="submit" class="btn-primary">
+                            <i class="fa-solid fa-paper-plane"></i> Send Message
+                        </button>
+                        <button type="button" id="btn-cancel-compose" class="btn-secondary">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- THREAD VIEWER (DEFAULT OR ACTIVE) -->
+        <div id="thread-view-panel" style="display:{% if active_mail %}flex{% else %}none{% endif %}; height:100%; flex-direction:column;" class="mail-view">
+            {% if active_mail %}
+                <!-- Thread header -->
+                <div style="border-bottom:1px solid var(--border-color); padding-bottom:16px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div>
+                        <h3 style="font-size:20px; font-weight:700; color:#fff; margin-bottom:4px;">{{ active_mail.subject }}</h3>
+                        <span style="font-size:12px; color:var(--text-muted);">
+                            Started by {{ active_mail.fromuser }} to {{ active_mail.touser | capitalize }}
+                        </span>
+                    </div>
+                    <span style="font-size:11px; color:var(--text-muted);">{{ active_mail.createdAt.strftime('%Y-%m-%d %H:%M') }}</span>
+                </div>
+                
+                <!-- Chat bubbles container -->
+                <div class="mail-messages-container">
+                    <!-- Original Message -->
+                    <div class="message-bubble incoming">
+                        <div style="font-size:11px; font-weight:600; color:var(--color-primary); margin-bottom:4px;">
+                            {{ active_mail.fromuser.split(' ')[0] }}
+                        </div>
+                        <div style="font-size:14px; line-height:1.5;">{{ active_mail.message }}</div>
+                    </div>
+
+                    <!-- Replies -->
+                    {% for reply in active_mail.replies %}
+                        <div class="message-bubble {% if reply.usertype == 'student' %}outgoing{% else %}incoming{% endif %}">
+                            <div style="font-size:11px; font-weight:600; margin-bottom:4px; opacity:0.8;">
+                                {% if reply.usertype == 'student' %}You{% else %}{{ reply.usertype | capitalize }}{% endif %}
+                            </div>
+                            <div style="font-size:14px; line-height:1.5;">{{ reply.message }}</div>
+                            <div style="font-size:9px; text-align:right; margin-top:6px; opacity:0.6;">
+                                {{ reply.createdAt.strftime('%b %d, %H:%M') }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Reply Input Box -->
+                <form action="{{ url_for('student.reply_mailbox', mail_id=active_mail.id_mailbox) }}" method="POST" style="border-top:1px solid var(--border-color); padding-top:16px; display:flex; gap:12px;">
+                    <input type="text" name="message" class="form-control" placeholder="Type your reply message..." required style="flex-grow:1;">
+                    <button type="submit" class="btn-primary" style="padding:10px 20px;">
+                        <i class="fa-solid fa-reply"></i> Reply
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+
+        <!-- DEFAULT EMPTY STATE -->
+        <div id="empty-state-panel" style="display:{% if active_mail %}none{% else %}flex{% endif %}; height:100%; align-items:center; justify-content:center; flex-direction:column; text-align:center; padding:40px;" class="mail-view">
+            <i class="fa-regular fa-comments" style="font-size:48px; margin-bottom:16px; color:var(--color-primary);"></i>
+            <h3 style="color:#fff; font-size:18px; margin-bottom:8px;">No Conversation Selected</h3>
+            <p style="color:var(--text-muted); max-width:320px; font-size:13.5px; margin-bottom:24px;">Select a thread from the side panel or compose a new inquiry message.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const btnShowCompose = document.getElementById('btn-show-compose');
+        const btnCancelCompose = document.getElementById('btn-cancel-compose');
+        const composePanel = document.getElementById('compose-form-panel');
+        const threadPanel = document.getElementById('thread-view-panel');
+        const emptyPanel = document.getElementById('empty-state-panel');
+
+        if (btnShowCompose) {
+            btnShowCompose.addEventListener('click', function() {
+                if (threadPanel) threadPanel.style.display = 'none';
+                if (emptyPanel) emptyPanel.style.display = 'none';
+                composePanel.style.display = 'flex';
+            });
+        }
+
+        if (btnCancelCompose) {
+            btnCancelCompose.addEventListener('click', function() {
+                composePanel.style.display = 'none';
+                {% if active_mail %}
+                    if (threadPanel) threadPanel.style.display = 'flex';
+                {% else %}
+                    if (emptyPanel) emptyPanel.style.display = 'flex';
+                {% endif %}
+            });
+        }
+        
+        // Scroll the message list to the bottom
+        const messageContainer = document.querySelector('.mail-messages-container');
+        if (messageContainer) {
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+    });
+</script>
+{% endblock %}

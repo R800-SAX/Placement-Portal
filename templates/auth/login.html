@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In | PlaceTrack AI{% endblock %}
+
+{% block public_content %}
+<div class="glass-panel" style="max-width: 450px; margin: 60px auto 0; padding: 40px; border-radius: 20px;">
+    <h2 style="font-size:24px; font-weight:800; text-align:center; margin-bottom:6px;">Welcome Back</h2>
+    <p style="color:var(--text-muted); text-align:center; font-size:14px; margin-bottom:30px;">Choose your role and enter credentials to sign in.</p>
+    
+    <!-- Tab Controls -->
+    <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border-color); margin-bottom:28px; padding-bottom:4px;">
+        <button type="button" id="tab-student" class="tab-btn active-tab" style="flex:1; padding:10px; background:transparent; border:none; color:var(--text-muted); font-weight:600; font-size:14.5px; cursor:pointer;">Candidate</button>
+        <button type="button" id="tab-company" class="tab-btn" style="flex:1; padding:10px; background:transparent; border:none; color:var(--text-muted); font-weight:600; font-size:14.5px; cursor:pointer;">Recruiter</button>
+        <button type="button" id="tab-admin" class="tab-btn" style="flex:1; padding:10px; background:transparent; border:none; color:var(--text-muted); font-weight:600; font-size:14.5px; cursor:pointer;">Admin</button>
+    </div>
+    
+    <!-- Form -->
+    <form action="{{ url_for('auth.login') }}" method="POST" style="display:flex; flex-direction:column; gap:20px;">
+        <!-- Hidden input for selected role -->
+        <input type="hidden" id="login-role" name="role" value="student">
+        
+        <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" id="username-label" for="email">Email Address</label>
+            <input type="text" id="email" name="email" class="form-control" placeholder="student@example.com" required autocomplete="username">
+        </div>
+        
+        <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="password">Password</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+        
+        <button type="submit" class="btn-primary" style="justify-content:center; padding:12px; font-size:15px;">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i> Login Account
+        </button>
+    </form>
+    
+    <!-- Registration Links -->
+    <div id="register-links-container" style="margin-top:24px; text-align:center; font-size:13.5px; color:var(--text-muted);">
+        <span>Don't have an account?</span>
+        <div style="margin-top:8px;">
+            <a href="{{ url_for('auth.register_student') }}" id="reg-link-student" style="color:var(--color-primary); font-weight:600;">Register as Student</a>
+            <a href="{{ url_for('auth.register_company') }}" id="reg-link-company" style="color:var(--color-primary); font-weight:600; display:none;">Register as Recruiter</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .tab-btn {
+        transition: color 0.2s ease, border-bottom 0.2s ease;
+        border-bottom: 2px solid transparent !important;
+    }
+    .active-tab {
+        color: #fff !important;
+        border-bottom: 2px solid var(--color-primary) !important;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabStudent = document.getElementById('tab-student');
+        const tabCompany = document.getElementById('tab-company');
+        const tabAdmin = document.getElementById('tab-admin');
+        const roleInput = document.getElementById('login-role');
+        const label = document.getElementById('username-label');
+        const emailInput = document.getElementById('email');
+        const registerContainer = document.getElementById('register-links-container');
+        const regLinkStudent = document.getElementById('reg-link-student');
+        const regLinkCompany = document.getElementById('reg-link-company');
+        
+        function selectTab(selectedTab, role, labelText, placeholderText, showRegister, isStudent) {
+            [tabStudent, tabCompany, tabAdmin].forEach(t => t.classList.remove('active-tab'));
+            selectedTab.classList.add('active-tab');
+            roleInput.value = role;
+            label.textContent = labelText;
+            emailInput.placeholder = placeholderText;
+            emailInput.type = (role === 'admin') ? 'text' : 'email';
+            
+            if (showRegister) {
+                registerContainer.style.display = 'block';
+                if (isStudent) {
+                    regLinkStudent.style.display = 'inline';
+                    regLinkCompany.style.display = 'none';
+                } else {
+                    regLinkStudent.style.display = 'none';
+                    regLinkCompany.style.display = 'inline';
+                }
+            } else {
+                registerContainer.style.display = 'none';
+            }
+        }
+        
+        tabStudent.addEventListener('click', () => selectTab(tabStudent, 'student', 'Email Address', 'student@example.com', true, true));
+        tabCompany.addEventListener('click', () => selectTab(tabCompany, 'company', 'Email Address', 'recruiter@example.com', true, false));
+        tabAdmin.addEventListener('click', () => selectTab(tabAdmin, 'admin', 'Username', 'admin', false, false));
+    });
+</script>
+{% endblock %}

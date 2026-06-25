@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Audit Job Drives | PlaceTrack AI{% endblock %}
+
+{% block dashboard_title %}Audit Placement Drives{% endblock %}
+
+{% block content %}
+<div class="glass-panel section-card">
+    <h3 class="section-title" style="margin-bottom:20px;">System Job Drives</h3>
+    
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Job Title</th>
+                    <th>Company Name</th>
+                    <th>Salary Package</th>
+                    <th>Experience Level</th>
+                    <th>Date Posted</th>
+                    <th>Applications</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if jobs %}
+                    {% for job in jobs %}
+                        <tr>
+                            <td style="font-weight:600; color:#fff;">{{ job.jobtitle }}</td>
+                            <td>
+                                <span style="color:var(--color-primary); font-weight:500;">{{ job.company.companyname }}</span>
+                            </td>
+                            <td>₹ {{ job.minimumsalary }} - {{ job.maximumsalary }} PM</td>
+                            <td>{{ job.experience }}</td>
+                            <td style="font-size:13px; color:var(--text-muted);">{{ job.createdat.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <span class="badge badge-under-review" style="font-weight:600;">
+                                    {{ job.applications | length }} Candidates
+                                </span>
+                            </td>
+                            <td>
+                                <form action="{{ url_for('admin.delete_job', job_id=job.id_jobpost) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this job posting? This will remove all student applications connected to this job drive.');">
+                                    <button type="submit" class="btn-danger" style="padding:6px 12px; font-size:12px; display:inline-flex; align-items:center; gap:4px;">
+                                        <i class="fa-solid fa-trash-can"></i> Remove
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="7" style="text-align:center; padding:30px; color:var(--text-muted);">
+                            No job postings found on the system.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,153 +1,93 @@
-# Inhouse Competition - JIIT Optica Student Chapter
-## Topic-College Realted
+# PlaceTrack AI - Intelligent Placement Coordinator & Analytics Portal
 
-## Team-code stomp
+PlaceTrack AI is a premium, university-grade placement automation and talent matching platform. It connects graduating student cohorts with corporate recruiters, automates drive scheduling, and uses local AI analytics to bridge talent-recruitment gaps.
 
+Originally migrated from a legacy PHP script, the entire architecture has been rewritten in **Python Flask** with a modern, high-performance, flat dark theme.
 
-### [Problem Statement]()- Many time student have visited many websites / blogs for find where is Job opening is there or not, Many cases they miss the opportunity. In this modern world bombard with information make students confused, one mentor in form of senior can definitely help how to web dev, Android dev ,AWS and many more questions 
+---
 
+## Key Features
 
+### 1. Minimalist Flat User Interface
+- Designed using custom CSS variables, CSS Grid, and Flexbox for maximum performance and layout cleanliness.
+- Powered by the highly legible **Inter** font family stack.
+- Zero clutter: no glowing glassmorphism, heavy gradients, or unnecessary animations, ensuring an enterprise-grade dark layout.
 
+### 2. Floating AI Support Chatbot
+- A floating support widget accessible from all dashboard views.
+- Powered by a local NLP rules-matcher in `ai_engine.py` to handle session-specific inquiries for Candidates, Recruiters, and Admins.
+- Answers questions about resume uploads, job approvals, recruiter requirements, and mailbox messaging.
 
-## INTRODUCTION
+### 3. Talent Sector Classification & Job Matching
+- Automatically analyzes student skills, stream, and bio to map them into key industry sectors (e.g., Software Engineering, Web Development, Core Engineering, Data Science & ML).
+- Computes job-student compatibility percentages (0-100%) and provides a detailed breakdown of matched vs. missing skills.
 
-The Placement Management System is a web application for the training and  placement department of our college. This system can be accessed throughout the  organization with proper login credentials. Students will be able to upload their  personal and educational information which will be managed efficiently by the  system. It intends to provide a fast access to the placement procedures and related  activities and ensures to maintain the details of the student secure. The key feature of  this project is that it is a onetime registration enabled system. This project will aid  colleges to practice full IT deployment.
+### 4. Admin AI Insights Dashboard
+- Maps graduating student sector talent counts against active recruiter job drives.
+- Analyzes matching ratios and automatically highlights talent surpluses or shortages.
+- Suggests targeted recruiting partners to invite (e.g., Wipro for Web Dev, AMD for Core VLSI) and allows administrators to trigger invitations.
 
-Website- https://code-placement.000webhostapp.com/index.php
+### 5. ERP Registry Mismatch Verification
+- Compares candidate-reported qualifications (SSC, HSC, UG scores) with official college ERP database records.
+- Automatically flags profile discrepancies in red for administrators to prevent academic score inflation.
 
+### 6. Interactive Message Center
+- An internal mailbox allowing live conversation threads between students, recruiters, and the college placement administration.
 
-## Features
-- Separate Login Page For Admin, Coordinater and Student
-- Interactive Dashboard
-- Coordinater can Update the drive and check the applied and modify accordingly
-- Admin can Approve and reject request of All type of registration 
-- Admin can post notice to all students and coordinater separately
-- Upload technical papers
-- View Student and Company Profile
-- Interactive Contact us Page
+---
 
+## Technology Stack
 
+- **Backend Framework**: Python (Flask)
+- **Authentication & Sessions**: Flask-Login
+- **Database & ORM**: SQLite with Flask-SQLAlchemy ORM (supports zero-config run and easy MySQL/PostgreSQL migration)
+- **Frontend Layer**: HTML5, Vanilla JavaScript (ES6+), Custom CSS (Variables, Flexbox, Grid)
+- **AI Matching Engine**: Local regex NLP heuristics (`ai_engine.py`)
 
-## Technology and Framework Used
-- HTML
-- CSS
-- Javascript
-- Reat
-- Bootstrap
-- PHP
-- Mysql
+---
 
+## Getting Started & Local Run
 
+### Prerequisites
+- Python 3.8 or higher installed on your machine.
 
+### Installation Steps
 
+1. **Activate Virtual Environment**:
+   ```bash
+   python -m venv venv
+   # On Windows:
+   .\venv\Scripts\activate
+   # On macOS/Linux:
+   source venv/bin/activate
+   ```
 
+2. **Install Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
+3. **Initialize and Seed Database**:
+   This runs the seeder script `init_db.py` to compile the schema, parse 48,000+ states and cities from the legacy dataset, and populate sample notices, student records, and company drives:
+   ```bash
+   python init_db.py
+   ```
 
+4. **Start Web Server**:
+   Launch the Flask development server:
+   ```bash
+   python app.py
+   ```
 
+5. **Access the Portal**:
+   Open your browser and navigate to `http://localhost:5000`.
 
+---
 
+## Mock Accounts for Verification
 
-# PROJECT SNAPSHOTS
-
-- Home Page
-
-
-
-
-
-
-
-![Screenshot 2023-01-13 010557](https://user-images.githubusercontent.com/111070211/212168678-52429e68-17a2-4150-9643-5706f9eadea5.jpg)
-
-- Registration Page For Students and Companies
-
-
-![Screenshot 2023-01-13 010755](https://user-images.githubusercontent.com/111070211/212170065-d00e3794-2f7c-449f-b18c-6767fc73a37e.jpg)
-
- 
- - Login Page
- 
-
-![Screenshot 2023-01-13 013254](https://user-images.githubusercontent.com/111070211/212169229-27f3c260-ac8f-480d-a13c-178a2ded1dde.jpg)
-
-Admin Login
-
-![image](https://user-images.githubusercontent.com/111070211/212169400-2040c5f6-e110-42b6-bd27-8b7b18e06743.png)
-
-Admin dashboard
-
-
-
-
-![Screenshot 2023-01-13 014007](https://user-images.githubusercontent.com/111070211/212170495-0bb04ef3-83bb-459b-ba17-71b4256f396d.jpg)
-
-coordinator dashboard
-
-![Screenshot 2023-01-13 010827](https://user-images.githubusercontent.com/111070211/212170601-a1fe5719-50fa-4275-b4d5-c27d1ca3fe57.jpg)
-
-- contact us
-
-![image](https://user-images.githubusercontent.com/111070211/212170893-dbb903ec-b720-4331-9d6c-22abe6107f2a.png)
-
-![image](https://user-images.githubusercontent.com/111070211/212171069-884f15b9-13a7-4d74-b7d4-0d46d178b359.png)
-
-
-<br>
-GETTING STARTED
-
-1. Install XAMPP or WAMPP.
-
-2. Open XAMPP Control panal and start [apache] and [mysql] .
-
-3. Download project from github(https://github.com/atinder11/Placement-Portal).
-
-OR follow gitbash commands
-
-i> cd C:\\xampp\htdocs\
-
-ii> git clone https://github.com/atinder11/Placement-Portal
-
-4. Extract files in C:\xampp\htdocs.
-
-5. Open link localhost/phpmyadmin
-
-6. Click on new at side navbar.
-
-7. Give a database name as (placement_portal) hit on create button.
-
-8. After creating database name click on import.
-
-9. Browse the file in directory [placement-portal/database/db1.sql].
-
-10. Open any browser and type http://localhost/placement-portal.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-### Team Member
-
-- [Atinder Kumar](https://github.com/atinder11)
-
-- [Suyash Rawat](https://github.com/SuyashRawat)
-
-- [Jatin Tagore](https://github.com/jazz1706)
-
-
+Test the role-based views and the chatbot using these pre-seeded accounts:
+- **Admin Panel**: Username: `admin` | Password: `123456`
+- **Candidate (Approved)**: Email: `jatin@gmail.com` | Password: `123456`
+- **Candidate (Discrepancy Mismatch)**: Email: `student@example.com` | Password: `password123`
+- **Corporate Recruiter**: Email: `recruiter@example.com` | Password: `password123`

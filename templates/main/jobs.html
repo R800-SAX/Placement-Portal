@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Active Drives | PlaceTrack AI{% endblock %}
+
+{% block public_content %}
+<div style="max-width: 1000px; margin: 40px auto 0;">
+    <h1 style="font-size:36px; font-weight:800; margin-bottom:8px;">Active Job Drives</h1>
+    <p style="color:var(--text-muted); margin-bottom:30px;">Search through current placement job openings and internship drives. Sign in to apply.</p>
+    
+    <!-- Search Bar Form -->
+    <form action="{{ url_for('main.jobs') }}" method="GET" style="display:flex; gap:16px; margin-bottom:40px;">
+        <div class="nav-search" style="display:flex; flex-grow:1; width:auto; border-radius:12px; background:var(--bg-card); padding:12px 20px;">
+            <i class="fa-solid fa-magnifying-glass text-muted" style="margin-top:2px;"></i>
+            <input type="text" name="search" value="{{ search }}" placeholder="Search by Job Title, Company, Description, or Skills..." style="font-size:14.5px;">
+        </div>
+        <button type="submit" class="btn-primary" style="border-radius:12px; padding:12px 28px;">
+            <i class="fa-solid fa-search"></i> Search
+        </button>
+        {% if search %}
+            <a href="{{ url_for('main.jobs') }}" class="btn-secondary" style="border-radius:12px; padding:12px 20px; display:inline-flex; align-items:center; justify-content:center;">Clear</a>
+        {% endif %}
+    </form>
+    
+    <!-- Jobs List Grid -->
+    <div style="display:flex; flex-direction:column; gap:24px;">
+        {% if jobs %}
+            {% for job in jobs %}
+                <div class="glass-panel" style="padding:28px; display:grid; grid-template-columns: 1fr auto; gap:20px; align-items: flex-start;">
+                    <div>
+                        <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+                            <h3 style="font-size:20px; font-weight:700; color:#fff;">{{ job.jobtitle }}</h3>
+                            <span class="badge badge-active" style="font-size:10px;">Active</span>
+                        </div>
+                        <div style="color:var(--color-primary); font-weight:600; font-size:15px; margin-bottom:16px;">
+                            <i class="fa-solid fa-building text-muted"></i> {{ job.company.companyname }}
+                        </div>
+                        
+                        <div style="display:flex; flex-wrap:wrap; gap:20px; font-size:13.5px; color:var(--text-muted); margin-bottom:20px;">
+                            <span><i class="fa-solid fa-wallet text-muted"></i> ₹ {{ job.minimumsalary }} - {{ job.maximumsalary }} PM</span>
+                            <span><i class="fa-solid fa-briefcase text-muted"></i> {{ job.experience }}</span>
+                            <span><i class="fa-solid fa-graduation-cap text-muted"></i> {{ job.qualification }}</span>
+                        </div>
+                        
+                        <div style="font-size:14px; color:var(--text-muted); line-height:1.7;">
+                            {{ job.description }}
+                        </div>
+                    </div>
+                    
+                    <div style="display:flex; flex-direction:column; gap:12px; text-align:right;">
+                        <span style="font-size:11px; color:var(--text-muted);">Posted on {{ job.createdat.strftime('%Y-%m-%d') }}</span>
+                        
+                        {% if current_user.is_authenticated and current_user_role == 'student' %}
+                            <a href="{{ url_for('student.apply', job_id=job.id_jobpost) }}" class="btn-primary" style="justify-content:center;">
+                                <i class="fa-solid fa-file-signature"></i> Apply Now
+                            </a>
+                        {% elif current_user.is_authenticated %}
+                            <button class="btn-secondary" style="cursor:not-allowed; opacity:0.6;" disabled>
+                                Candidate Only
+                            </button>
+                        {% else %}
+                            <a href="{{ url_for('auth.login') }}" class="btn-primary" style="justify-content:center;">
+                                <i class="fa-solid fa-arrow-right-to-bracket"></i> Login to Apply
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="glass-panel" style="padding:60px; text-align:center; color:var(--text-muted);">
+                <i class="fa-solid fa-box-open" style="font-size:48px; margin-bottom:16px; display:block; color:var(--color-primary);"></i>
+                <h3 style="color:#fff; font-size:18px; margin-bottom:8px;">No Job Openings Match Your Query</h3>
+                <p>Try searching using alternate keywords or clear filters to view all drives.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

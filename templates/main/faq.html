@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Frequently Asked Questions | PlaceTrack AI{% endblock %}
+
+{% block public_content %}
+<div style="max-width: 800px; margin: 40px auto 0;">
+    <h1 style="font-size:36px; font-weight:800; text-align:center; margin-bottom:12px;">Frequently Asked Questions</h1>
+    <p style="color:var(--text-muted); text-align:center; margin-bottom:40px;">Find answers to typical questions about registration, recruiter profile approval, and student resumes.</p>
+    
+    <div class="faq-list">
+        <!-- Question 1 -->
+        <div class="glass-panel faq-item">
+            <button class="faq-trigger">
+                <span>How do students register on the new PlaceTrack AI portal?</span>
+                <i class="fa-solid fa-chevron-down" style="font-size:12px; transition: transform var(--transition-fast);"></i>
+            </button>
+            <div class="faq-content">
+                Students can sign up by clicking the "Sign In / Register" button at the top-right, selecting the student registration link, filling out their academic stats (HSC, SSC, UG CGPA), and uploading a resume. The account is activated once approved by the administrator.
+            </div>
+        </div>
+        
+        <!-- Question 2 -->
+        <div class="glass-panel faq-item">
+            <button class="faq-trigger">
+                <span>Who approves recruiter profiles?</span>
+                <i class="fa-solid fa-chevron-down" style="font-size:12px; transition: transform var(--transition-fast);"></i>
+            </button>
+            <div class="faq-content">
+                All company and recruiter accounts undergo verification by the placement coordinator administrators. Once approved, recruiters will receive an email confirmation and can proceed to post job openings.
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="glass-panel faq-item">
+            <button class="faq-trigger">
+                <span>What file formats are supported for student resumes?</span>
+                <i class="fa-solid fa-chevron-down" style="font-size:12px; transition: transform var(--transition-fast);"></i>
+            </button>
+            <div class="faq-content">
+                Students can upload their resumes in PDF format (preferred), DOC, or DOCX. The maximum file size limit is 16MB. Ensure that the uploaded file matches details in your academic profile.
+            </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="glass-panel faq-item">
+            <button class="faq-trigger">
+                <span>Can candidates track their active job applications?</span>
+                <i class="fa-solid fa-chevron-down" style="font-size:12px; transition: transform var(--transition-fast);"></i>
+            </button>
+            <div class="faq-content">
+                Yes! From the student dashboard, navigate to the "Applied Jobs" panel. You will see a chronological tracker showing if your application is "Pending", "Under Review", "Selected", or "Rejected" by the respective recruiter.
+            </div>
+        </div>
+
+        <!-- Question 5 -->
+        <div class="glass-panel faq-item">
+            <button class="faq-trigger">
+                <span>How can recruiters communicate with applied candidates?</span>
+                <i class="fa-solid fa-chevron-down" style="font-size:12px; transition: transform var(--transition-fast);"></i>
+            </button>
+            <div class="faq-content">
+                Recruiters can use the internal Message Center (Mailbox) on the dashboard to start text chats, request further documents, or schedule interview slots with candidates who have applied to their active drives.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

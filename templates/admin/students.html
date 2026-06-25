@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Candidates | PlaceTrack AI{% endblock %}
+
+{% block dashboard_title %}Manage Candidates{% endblock %}
+
+{% block content %}
+<div class="glass-panel section-card">
+    <div class="section-header" style="flex-direction:column; align-items:flex-start; gap:16px;">
+        <h3 class="section-title" style="margin-bottom:0;">Candidate Directory</h3>
+        
+        <!-- AI Interests category filters -->
+        <div style="display:flex; flex-wrap:wrap; gap:8px; width:100%; border-bottom:1px solid var(--border-color); padding-bottom:12px;">
+            <a href="{{ url_for('admin.manage_students') }}" class="btn-secondary {% if not selected_category %}active-filter{% endif %}" style="padding:6px 14px; font-size:12px; border-radius:20px;">
+                All Candidates
+            </a>
+            <a href="{{ url_for('admin.manage_students', ai_category='Software Engineering') }}" class="btn-secondary {% if selected_category == 'Software Engineering' %}active-filter{% endif %}" style="padding:6px 14px; font-size:12px; border-radius:20px;">
+                Software Engineering
+            </a>
+            <a href="{{ url_for('admin.manage_students', ai_category='Web Development') }}" class="btn-secondary {% if selected_category == 'Web Development' %}active-filter{% endif %}" style="padding:6px 14px; font-size:12px; border-radius:20px;">
+                Web Development
+            </a>
+            <a href="{{ url_for('admin.manage_students', ai_category='Data Science & ML') }}" class="btn-secondary {% if selected_category == 'Data Science & ML' %}active-filter{% endif %}" style="padding:6px 14px; font-size:12px; border-radius:20px;">
+                Data Science &amp; ML
+            </a>
+            <a href="{{ url_for('admin.manage_students', ai_category='Core Engineering') }}" class="btn-secondary {% if selected_category == 'Core Engineering' %}active-filter{% endif %}" style="padding:6px 14px; font-size:12px; border-radius:20px;">
+                Core Engineering
+            </a>
+            <a href="{{ url_for('admin.manage_students', ai_category='Management & Product') }}" class="btn-secondary {% if selected_category == 'Management & Product' %}active-filter{% endif %}" style="padding:6px 14px; font-size:12px; border-radius:20px;">
+                Management &amp; Product
+            </a>
+        </div>
+    </div>
+    
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Candidate Name</th>
+                    <th>Email Address</th>
+                    <th>Academic Program</th>
+                    <th>AI Classification</th>
+                    <th>ERP verification</th>
+                    <th>Status / Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if students %}
+                    {% for std in students %}
+                        <!-- Main Row -->
+                        <tr class="candidate-row" data-target="details-{{ std.id_user }}" style="cursor:pointer;">
+                            <td>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <i class="fa-solid fa-chevron-right text-muted toggle-icon" style="font-size:10px; transition: transform 0.2s ease;"></i>
+                                    <div>
+                                        <div style="font-weight:600; color:#fff;">{{ std.firstname }} {{ std.lastname }}</div>
+                                        <div style="font-size:11px; color:var(--text-muted);">{{ std.contactno }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ std.email }}</td>
+                            <td>{{ std.qualification }} ({{ std.stream }})</td>
+                            <td>
+                                <span style="font-weight:500; color:#fff;">{{ std.ai_sector }}</span>
+                                <div style="font-size:10px; color:var(--text-muted);">Confidence: {{ std.ai_confidence }}%</div>
+                            </td>
+                            <td>
+                                {% if std.ai_verify.status == 'Verified' %}
+                                    <span class="badge badge-selected"><i class="fa-solid fa-circle-check"></i> Verified</span>
+                                {% elif std.ai_verify.status == 'Mismatch Found' %}
+                                    <span class="badge badge-rejected"><i class="fa-solid fa-triangle-exclamation"></i> Mismatch</span>
+                                {% else %}
+                                    <span class="badge badge-pending"><i class="fa-solid fa-question"></i> No Registry</span>
+                                {% endif %}
+                            </td>
+                            <td onclick="event.stopPropagation();">
+                                <div style="display:flex; gap:6px; align-items:center;">
+                                    {% if std.active != 1 %}
+                                        <form action="{{ url_for('admin.change_student_status', user_id=std.id_user, status_code=1) }}" method="POST">
+                                            <button type="submit" class="btn-secondary" style="padding:4px 8px; font-size:11px; color:var(--color-success); border-color:rgba(16,185,129,0.2);">Approve</button>
+                                        </form>
+                                    {% endif %}
+                                    {% if std.active != 0 %}
+                                        <form action="{{ url_for('admin.change_student_status', user_id=std.id_user, status_code=0) }}" method="POST">
+                                            <button type="submit" class="btn-secondary" style="padding:4px 8px; font-size:11px; color:var(--color-danger); border-color:rgba(239,68,68,0.2);">Reject</button>
+                                        </form>
+                                    {% endif %}
+                                    
+                                    <form action="{{ url_for('admin.delete_student', user_id=std.id_user) }}" method="POST" onsubmit="return confirm('Are you sure you want to permanently delete candidate {{ std.firstname }} {{ std.lastname }}?');">
+                                        <button type="submit" class="btn-danger" style="padding:4px 8px; font-size:11px;">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        
+                        <!-- Collapsible Details Row -->
+                        <tr id="details-{{ std.id_user }}" style="display:none; background: rgba(255,255,255,0.015);">
+                            <td colspan="6" style="padding: 20px 40px; border-bottom: 1px solid var(--border-color);">
+                                <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:30px; margin-bottom:20px;">
+                                    <div>
+                                        <h4 style="font-size:14px; font-weight:700; color:var(--color-primary); margin-bottom:8px;">Candidate Bio</h4>
+                                        <p style="font-size:13px; color:var(--text-muted); line-height:1.6; margin-bottom:16px;">
+                                            {{ std.aboutme if std.aboutme else 'No biography provided by candidate.' }}
+                                        </p>
+                                        
+                                        <h4 style="font-size:14px; font-weight:700; color:var(--color-primary); margin-bottom:8px;">Skills</h4>
+                                        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                                            {% if std.skills %}
+                                                {% for skill in std.skills.split(',') %}
+                                                    <span style="font-size:11px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); padding:3px 8px; border-radius:4px; color:#fff;">
+                                                        {{ skill.strip() }}
+                                                    </span>
+                                                {% endfor %}
+                                            {% else %}
+                                                <span style="font-size:12.5px; color:var(--text-muted);">None specified</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="border-left: 1px solid var(--border-color); padding-left:30px; display:flex; flex-direction:column; gap:12px; font-size:13px; color:var(--text-muted);">
+                                        <h4 style="font-size:14px; font-weight:700; color:var(--color-primary); margin-bottom:4px;">Academic Info</h4>
+                                        <div><strong>Course / Stream:</strong> <span style="color:#fff;">{{ std.qualification }} ({{ std.stream }})</span></div>
+                                        <div><strong>Graduation Year:</strong> <span style="color:#fff;">{{ std.passingyear }}</span></div>
+                                        <div><strong>DOB:</strong> <span style="color:#fff;">{{ std.dob }} (Age: {{ std.age }})</span></div>
+                                        <div><strong>Location:</strong> <span style="color:#fff;">{{ std.city }}, {{ std.state }}</span></div>
+                                        <div><strong>Resume CV:</strong> 
+                                            {% if std.resume %}
+                                                <a href="{{ url_for('static', filename='uploads/resumes/' + std.resume) }}" target="_blank" style="color:var(--color-primary); text-decoration:underline;">
+                                                    <i class="fa-solid fa-file-pdf"></i> View Resume
+                                                </a>
+                                            {% else %}
+                                                <span style="color:var(--color-danger);">Not uploaded</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Database Cross-Verification Box -->
+                                <div style="background:rgba(15,23,42,0.6); border:1px solid var(--border-color); border-radius:12px; padding:20px;">
+                                    <h4 style="font-size:14px; font-weight:700; color:var(--color-primary); margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+                                        <i class="fa-solid fa-database"></i> ERP Official Registry Validation Report
+                                    </h4>
+                                    
+                                    {% if std.ai_verify.status != 'No Record Found' %}
+                                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:16px;">
+                                            <!-- SSC -->
+                                            <div style="padding:12px; border-radius:8px; border:1px solid {% if std.ai_verify.ssc.match %}rgba(16,185,129,0.2){% else %}rgba(239,68,68,0.2){% endif %}; background:{% if std.ai_verify.ssc.match %}rgba(16,185,129,0.02){% else %}rgba(239,68,68,0.02){% endif %};">
+                                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                                                    <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted); font-weight:600;">10th Class (SSC)</span>
+                                                    {% if std.ai_verify.ssc.match %}
+                                                        <i class="fa-solid fa-circle-check" style="color:var(--color-success);"></i>
+                                                    {% else %}
+                                                        <i class="fa-solid fa-circle-xmark" style="color:var(--color-danger);"></i>
+                                                    {% endif %}
+                                                </div>
+                                                <div style="font-size:13px;">
+                                                    Claimed: <strong style="color:#fff;">{{ std.ssc }}%</strong> vs 
+                                                    Official: <strong style="color:#fff;">{{ std.ai_verify.ssc.official }}%</strong>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- HSC -->
+                                            <div style="padding:12px; border-radius:8px; border:1px solid {% if std.ai_verify.hsc.match %}rgba(16,185,129,0.2){% else %}rgba(239,68,68,0.2){% endif %}; background:{% if std.ai_verify.hsc.match %}rgba(16,185,129,0.02){% else %}rgba(239,68,68,0.02){% endif %};">
+                                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                                                    <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted); font-weight:600;">12th Class (HSC)</span>
+                                                    {% if std.ai_verify.hsc.match %}
+                                                        <i class="fa-solid fa-circle-check" style="color:var(--color-success);"></i>
+                                                    {% else %}
+                                                        <i class="fa-solid fa-circle-xmark" style="color:var(--color-danger);"></i>
+                                                    {% endif %}
+                                                </div>
+                                                <div style="font-size:13px;">
+                                                    Claimed: <strong style="color:#fff;">{{ std.hsc }}</strong> vs 
+                                                    Official: <strong style="color:#fff;">{{ std.ai_verify.hsc.official }}</strong>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- UG -->
+                                            <div style="padding:12px; border-radius:8px; border:1px solid {% if std.ai_verify.ug.match %}rgba(16,185,129,0.2){% else %}rgba(239,68,68,0.2){% endif %}; background:{% if std.ai_verify.ug.match %}rgba(16,185,129,0.02){% else %}rgba(239,68,68,0.02){% endif %};">
+                                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                                                    <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted); font-weight:600;">UG CGPA / Marks</span>
+                                                    {% if std.ai_verify.ug.match %}
+                                                        <i class="fa-solid fa-circle-check" style="color:var(--color-success);"></i>
+                                                    {% else %}
+                                                        <i class="fa-solid fa-circle-xmark" style="color:var(--color-danger);"></i>
+                                                    {% endif %}
+                                                </div>
+                                                <div style="font-size:13px;">
+                                                    Claimed: <strong style="color:#fff;">{{ std.ug }}%</strong> vs 
+                                                    Official: <strong style="color:#fff;">{{ std.ai_verify.ug.official }}%</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <div style="color:var(--color-warning); font-size:13px; display:flex; align-items:center; gap:8px;">
+                                            <i class="fa-solid fa-circle-exclamation"></i>
+                                            No official database entry found for email <strong>{{ std.email }}</strong> in the student ERP registry. Manual documents verification (physically reviewing mark sheets) is required.
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align:center; padding:30px; color:var(--text-muted);">
+                            No candidates found in selected category.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .active-filter {
+        background: var(--color-primary-gradient) !important;
+        border-color: transparent !important;
+        color: #fff !important;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const rows = document.querySelectorAll('.candidate-row');
+        rows.forEach(row => {
+            row.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const detailsRow = document.getElementById(targetId);
+                const toggleIcon = this.querySelector('.toggle-icon');
+                
+                if (detailsRow.style.display === 'table-row') {
+                    detailsRow.style.display = 'none';
+                    if (toggleIcon) toggleIcon.style.transform = 'rotate(0deg)';
+                } else {
+                    detailsRow.style.display = 'table-row';
+                    if (toggleIcon) toggleIcon.style.transform = 'rotate(90deg)';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

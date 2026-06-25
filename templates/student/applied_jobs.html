@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}My Applications | PlaceTrack AI{% endblock %}
+
+{% block dashboard_title %}Applied Job Drives{% endblock %}
+
+{% block content %}
+<div class="glass-panel section-card">
+    <div class="section-header">
+        <h3 class="section-title">Application Log</h3>
+        <a href="{{ url_for('main.jobs') }}" class="btn-primary" style="font-size:12px; padding:6px 16px;">
+            <i class="fa-solid fa-plus"></i> Apply to More
+        </a>
+    </div>
+
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Job Title</th>
+                    <th>Company</th>
+                    <th>Salary Package</th>
+                    <th>Requirement</th>
+                    <th>Action / Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if applications %}
+                    {% for app in applications %}
+                        <tr>
+                            <td style="font-weight:600; color:#fff;">{{ app.job_post.jobtitle }}</td>
+                            <td>
+                                <span style="color:var(--color-primary); font-weight:500;">{{ app.company.companyname }}</span>
+                            </td>
+                            <td style="font-size:13px; color:var(--text-muted);">
+                                ₹ {{ app.job_post.minimumsalary }} - {{ app.job_post.maximumsalary }} PM
+                            </td>
+                            <td style="font-size:13px; color:var(--text-muted);">
+                                {{ app.job_post.qualification }}
+                            </td>
+                            <td>
+                                {% if app.status == 2 %}
+                                    <span class="badge badge-pending"><i class="fa-solid fa-clock"></i> Applied / Pending</span>
+                                {% elif app.status == 1 %}
+                                    <span class="badge badge-selected"><i class="fa-solid fa-circle-check"></i> Selected</span>
+                                {% elif app.status == 0 %}
+                                    <span class="badge badge-rejected"><i class="fa-solid fa-circle-xmark"></i> Rejected</span>
+                                {% elif app.status == 3 %}
+                                    <span class="badge badge-under-review"><i class="fa-solid fa-spinner"></i> Under Review</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align:center; padding:40px; color:var(--text-muted);">
+                            <i class="fa-solid fa-file-signature" style="font-size:36px; margin-bottom:12px; display:block; color:var(--color-primary);"></i>
+                            You have not submitted applications to any drives. Open the <a href="{{ url_for('main.jobs') }}" style="color:var(--color-primary); text-decoration:underline;">Job Board</a> to get started.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

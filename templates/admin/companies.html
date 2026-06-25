@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Recruiters | PlaceTrack AI{% endblock %}
+
+{% block dashboard_title %}Manage Recruiters{% endblock %}
+
+{% block content %}
+<div class="glass-panel section-card">
+    <h3 class="section-title" style="margin-bottom:20px;">Corporate Recruiter Directory</h3>
+    
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Company Name</th>
+                    <th>Contact HR</th>
+                    <th>Email Address</th>
+                    <th>Website</th>
+                    <th>Verification Status</th>
+                    <th>Management Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if companies %}
+                    {% for comp in companies %}
+                        <tr>
+                            <td>
+                                <div style="font-weight:600; color:#fff;">{{ comp.companyname }}</div>
+                                <div style="font-size:11px; color:var(--text-muted);">{{ comp.city }}, {{ comp.state }}</div>
+                            </td>
+                            <td>
+                                <div style="font-weight:500; color:#fff;">{{ comp.name }}</div>
+                                <div style="font-size:11px; color:var(--text-muted);">{{ comp.contactno }}</div>
+                            </td>
+                            <td>{{ comp.email }}</td>
+                            <td>
+                                <a href="{{ comp.website }}" target="_blank" style="color:var(--color-primary); text-decoration:underline;">
+                                    {{ comp.website.replace('https://','').replace('http://','').split('/')[0] }}
+                                </a>
+                            </td>
+                            <td>
+                                {% if comp.active == 2 %}
+                                    <span class="badge badge-pending">Pending Verification</span>
+                                {% elif comp.active == 1 %}
+                                    <span class="badge badge-selected">Approved Recruiter</span>
+                                {% elif comp.active == 0 %}
+                                    <span class="badge badge-rejected">Rejected Recruiter</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div style="display:flex; gap:6px; align-items:center;">
+                                    {% if comp.active != 1 %}
+                                        <form action="{{ url_for('admin.change_company_status', company_id=comp.id_company, status_code=1) }}" method="POST">
+                                            <button type="submit" class="btn-secondary" style="padding:4px 8px; font-size:11px; color:var(--color-success); border-color:rgba(16,185,129,0.2);">Approve</button>
+                                        </form>
+                                    {% endif %}
+                                    {% if comp.active != 0 %}
+                                        <form action="{{ url_for('admin.change_company_status', company_id=comp.id_company, status_code=0) }}" method="POST">
+                                            <button type="submit" class="btn-secondary" style="padding:4px 8px; font-size:11px; color:var(--color-danger); border-color:rgba(239,68,68,0.2);">Reject</button>
+                                        </form>
+                                    {% endif %}
+                                    
+                                    <form action="{{ url_for('admin.delete_company', company_id=comp.id_company) }}" method="POST" onsubmit="return confirm('Are you sure you want to permanently delete recruiter {{ comp.companyname }}? All their posted jobs will be deleted.');">
+                                        <button type="submit" class="btn-danger" style="padding:4px 8px; font-size:11px;">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align:center; padding:30px; color:var(--text-muted);">
+                            No companies registered in database.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

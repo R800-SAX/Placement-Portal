@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Post Job opening | PlaceTrack AI{% endblock %}
+
+{% block dashboard_title %}Create Job Opening{% endblock %}
+
+{% block content %}
+<div class="glass-panel section-card" style="max-width: 700px; margin: 0 auto;">
+    <div class="section-header" style="margin-bottom:24px;">
+        <h3 class="section-title">New Job Drive Form</h3>
+        <a href="{{ url_for('company.manage_jobs') }}" class="btn-secondary" style="font-size:12px; padding:6px 12px;">Back to List</a>
+    </div>
+
+    <form action="{{ url_for('company.create_job') }}" method="POST" style="display:flex; flex-direction:column; gap:20px;">
+        <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="jobtitle">Job Title</label>
+            <input type="text" id="jobtitle" name="jobtitle" class="form-control" placeholder="e.g. Software Engineer Intern (Python/Flask)" required>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="minimumsalary">Minimum Salary (Per Month / Annual Package)</label>
+                <input type="text" id="minimumsalary" name="minimumsalary" class="form-control" placeholder="e.g. 30,000" required>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="maximumsalary">Maximum Salary</label>
+                <input type="text" id="maximumsalary" name="maximumsalary" class="form-control" placeholder="e.g. 45,000" required>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="experience">Experience Level Required</label>
+                <input type="text" id="experience" name="experience" class="form-control" placeholder="e.g. Fresher (0-1 Years)" required>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label" for="qualification">Minimum Qualification Required</label>
+                <input type="text" id="qualification" name="qualification" class="form-control" placeholder="e.g. B.Tech / MCA" required>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="description">Detailed Job Description</label>
+            <textarea id="description" name="description" class="form-control" rows="8" placeholder="Outline job responsibilities, mandatory skills, technology stacks, recruitment interview rounds..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary" style="justify-content:center; padding:12px; font-size:15px; margin-top:10px;">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Publish Job Posting
+        </button>
+    </form>
+</div>
+{% endblock %}

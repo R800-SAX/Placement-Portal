@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}About Us | PlaceTrack AI{% endblock %}
+
+{% block public_content %}
+<div style="max-width: 800px; margin: 40px auto 0;">
+    <h1 style="font-size:36px; font-weight:800; text-align:center; margin-bottom:12px;">About PlaceTrack AI</h1>
+    <p style="color:var(--text-muted); text-align:center; margin-bottom:40px;">Providing bridge connectivity between graduating student cohorts and leading technology employers.</p>
+    
+    <div class="glass-panel" style="padding: 40px; display:flex; flex-direction:column; gap:30px;">
+        <div>
+            <h2 style="font-size:20px; font-weight:700; color:var(--color-primary); margin-bottom:12px;">Our Mission</h2>
+            <p style="color:var(--text-muted); font-size:14.5px; line-height:1.7;">
+                The Training and Placement Department facilitates the process of placement of students passing out from the College besides collaborating with leading organizations and institutes in setting up internship and training programs of high value.
+            </p>
+        </div>
+        
+        <div style="border-top:1px solid var(--border-color); padding-top:30px;">
+            <h2 style="font-size:20px; font-weight:700; color:var(--color-primary); margin-bottom:12px;">Recruitment Drives</h2>
+            <p style="color:var(--text-muted); font-size:14.5px; line-height:1.7;">
+                The cell is well-equipped with infrastructure to support every stage of placement, including audio-visual lecture rooms, written test halls, computer setups for online coding examinations, group discussions chambers, and private interview booths.
+            </p>
+        </div>
+
+        <div style="border-top:1px solid var(--border-color); padding-top:30px;">
+            <h2 style="font-size:20px; font-weight:700; color:var(--color-primary); margin-bottom:12px;">Key Coordinators</h2>
+            <p style="color:var(--text-muted); font-size:14.5px; line-height:1.7; margin-bottom:16px;">
+                Our training and placement program is driven by student cell coordinators and senior faculty members who ensure that drives run smoothly and candidate qualifications align with target companies.
+            </p>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:20px;">
+                <div style="background: rgba(255,255,255,0.02); padding:16px; border-radius:10px; border:1px solid rgba(255,255,255,0.05);">
+                    <div style="font-weight:600; font-size:15px; color:#fff;">Dr. Amit Sharma</div>
+                    <div style="font-size:12px; color:var(--text-muted);">Head of PlaceTrack AI</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.02); padding:16px; border-radius:10px; border:1px solid rgba(255,255,255,0.05);">
+                    <div style="font-weight:600; font-size:15px; color:#fff;">Prof. Sneha Gupta</div>
+                    <div style="font-size:12px; color:var(--text-muted);">Faculty Coordinator</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
