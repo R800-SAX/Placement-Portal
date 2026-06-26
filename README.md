@@ -2,8 +2,6 @@
 
 PlaceTrack AI is a premium, university-grade placement automation and talent matching platform. It connects graduating student cohorts with corporate recruiters, automates drive scheduling, and uses local AI analytics to bridge talent-recruitment gaps.
 
-Originally migrated from a legacy PHP script, the entire architecture has been rewritten in **Python Flask** with a modern, high-performance, flat dark theme.
-
 ---
 
 ## Key Features
